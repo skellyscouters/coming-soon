@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>*{margin:0;padding:0;}html,body{background:#050505!important;}</style>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PLAGUE Protocol — Coming Soon</title>
+<meta name="description" content="PLAGUE is a Solana infection-mechanic DeFi protocol. Spread $PLAGUE. Survive Outbreaks. Earn real SOL — forever.">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;700&family=IBM+Plex+Mono:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --g:#00FF88;--r:#FF0033;--bg:#050505;
+  --text:#c4dfd0;--muted:#3e6b50;--dim:#1e3a28;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',monospace;overflow:hidden;}
+
+
+
+canvas{position:fixed;inset:0;z-index:0;}
+
+/* ── MAIN LAYOUT ── */
+.wrap{
+  position:fixed;inset:0;z-index:10;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;gap:0;
+  text-align:center;
+}
+
+/* ── BIOHAZARD ── */
+.bh-wrap{
+  position:relative;width:200px;height:200px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:28px;
+  opacity:0;animation:fade-in .1s .2s forwards;
+}
+.bh-glow{
+  position:absolute;inset:-40px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,255,136,.14) 0%,transparent 70%);
+  opacity:0;animation:glow-in 1.2s 1.8s ease-out forwards;
+}
+.bh-ring{
+  position:absolute;width:212px;height:212px;border-radius:50%;
+  border:1px solid rgba(0,255,136,.14);
+  opacity:0;animation:ring-in .6s 2.8s ease-out forwards;
+}
+.bh-ring2{
+  position:absolute;width:228px;height:228px;border-radius:50%;
+  border:1px solid rgba(0,255,136,.06);
+  opacity:0;animation:ring-in .6s 3s ease-out forwards;
+}
+.bh-svg{
+  width:200px;height:200px;
+  filter:drop-shadow(0 0 20px rgba(0,255,136,.28));
+  animation:spin 80s linear infinite;
+}
+/* stroke draw animation */
+.bh-path{
+  stroke-dasharray:2200;
+  stroke-dashoffset:2200;
+  animation:draw 2.2s .3s cubic-bezier(.4,0,.2,1) forwards;
+}
+.bh-dot{
+  opacity:0;
+  animation:fade-in .4s 2.3s ease-out forwards;
+}
+@keyframes draw{to{stroke-dashoffset:0;}}
+@keyframes glow-in{from{opacity:0;transform:scale(.8);}to{opacity:1;transform:scale(1);}}
+@keyframes ring-in{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes fade-in{to{opacity:1;}}
+
+/* ── TITLE ── */
+.title-wrap{
+  position:relative;display:inline-block;
+  margin-bottom:14px;
+  opacity:0;transform:translateY(32px);
+  animation:title-in .7s 2.4s cubic-bezier(.2,0,0,1) forwards;
+}
+.title{
+  font-family:'Chakra Petch',sans-serif;
+  font-size:clamp(68px,11vw,136px);
+  font-weight:700;letter-spacing:.08em;
+  color:#f0faf4;line-height:1;
+  position:relative;z-index:1;
+  animation:title-in .7s 2.4s cubic-bezier(.2,0,0,1) forwards,
+            text-glitch 7s 4s infinite;
+  opacity:0;
+}
+@keyframes title-in{to{opacity:1;transform:translateY(0);}}
+@keyframes text-glitch{
+  0%,85%,100%{transform:translate(0);text-shadow:none;}
+  86%{transform:translate(-3px,0);text-shadow:4px 0 rgba(255,0,51,.5),-4px 0 rgba(0,170,255,.5);}
+  87%{transform:translate(2px,1px);text-shadow:-3px 0 rgba(255,0,51,.35);}
+  88%{transform:translate(0);text-shadow:none;}
+  89%{transform:translate(-1px,0);text-shadow:2px 0 rgba(0,170,255,.3);}
+  90%{transform:translate(0);text-shadow:none;}
+}
+
+/* ── TYPEWRITER ── */
+.typewriter-wrap{
+  height:32px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;
+  opacity:0;animation:fade-in .01s 3.4s forwards;
+}
+.typewriter{
+  font-family:'Share Tech Mono',monospace;
+  font-size:clamp(16px,2.4vw,22px);
+  letter-spacing:.1em;color:var(--g);
+}
+.cursor{display:inline-block;width:2px;height:1em;background:var(--g);margin-left:3px;vertical-align:middle;animation:blink .7s step-end infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+/* ── SUBTITLE ── */
+.sub{
+  font-size:clamp(12px,1.6vw,15px);line-height:1.85;
+  color:var(--muted);max-width:520px;
+  margin-bottom:36px;
+  opacity:0;animation:fade-in .6s 5.4s ease-out forwards;
+}
+.sub em{font-style:normal;color:var(--text);}
+
+/* ── TIER ROW ── */
+.tiers{
+  display:flex;align-items:stretch;gap:1px;
+  background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.1);
+  margin-bottom:36px;
+  opacity:0;animation:fade-in .6s 5.9s ease-out forwards;
+  max-width:520px;width:100%;
+}
+.tier{flex:1;background:var(--bg);padding:14px 12px;display:flex;flex-direction:column;gap:5px;}
+.tier-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.22em;color:var(--muted);}
+.tier-val{font-family:'Chakra Petch',sans-serif;font-size:26px;font-weight:700;}
+.tier-val.g{color:var(--g);}.tier-val.a{color:#FF8C00;}.tier-val.r{color:var(--r);}
+.tier-range{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--dim);}
+
+/* ── CTAs ── */
+.ctas{
+  display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+  margin-bottom:40px;
+  opacity:0;animation:fade-in .6s 6.4s ease-out forwards;
+}
+.btn-wp{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:13px 28px;
+  border:1px solid rgba(0,255,136,.38);background:rgba(0,255,136,.08);
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;
+  color:var(--g);text-decoration:none;cursor:pointer;
+  transition:background .15s,border-color .15s;
+}
+.btn-wp:hover{background:rgba(0,255,136,.16);border-color:rgba(0,255,136,.6);}
+.btn-tg{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:13px 28px;
+  border:1px solid rgba(255,255,255,.08);background:transparent;
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;
+  color:rgba(255,255,255,.35);text-decoration:none;cursor:pointer;
+  transition:border-color .15s,color .15s;
+}
+.btn-tg:hover{border-color:rgba(255,255,255,.22);color:rgba(255,255,255,.6);}
+
+/* ── BADGE ── */
+.badge{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:8px 18px;
+  border:1px solid rgba(0,255,136,.2);background:rgba(0,255,136,.04);
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.28em;
+  color:rgba(0,255,136,.5);
+  opacity:0;animation:fade-in .6s 6.8s ease-out forwards;
+}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:var(--g);animation:blink .9s step-end infinite;}
+
+/* ── FOOTER ── */
+.foot{
+  position:fixed;bottom:0;left:0;right:0;z-index:20;
+  height:44px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(20px,4vw,48px);
+  border-top:1px solid rgba(0,255,136,.07);background:rgba(5,5,5,.96);
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;
+  color:var(--dim);
+  opacity:0;animation:fade-in .6s 7s ease-out forwards;
+}
+.foot a{color:var(--dim);text-decoration:none;}
+.foot a:hover{color:var(--muted);}
+
+/* ── MOBILE ── */
+@media(max-width:600px){
+  .bh-wrap{width:140px;height:140px;margin-bottom:20px;}
+  .bh-svg{width:140px;height:140px;}
+  .bh-ring{width:152px;height:152px;}
+  .bh-ring2{width:164px;height:164px;}
+  .tiers{flex-direction:column;max-width:280px;}
+  .tier{flex-direction:row;align-items:center;justify-content:space-between;padding:12px 16px;}
+  .tier-range{display:none;}
+  .ctas{flex-direction:column;width:100%;max-width:280px;}
+  .btn-wp,.btn-tg{justify-content:center;}
+  .sub{max-width:320px;}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<div class="wrap">
+
+  <!-- biohazard -->
+  <div class="bh-wrap">
+    <div class="bh-glow"></div>
+    <div class="bh-ring"></div>
+    <div class="bh-ring2"></div>
+    <svg class="bh-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- outer arcs -->
+      <path class="bh-path" d="M169.4,154.2A88,88,0,0,1,30.6,154.2" stroke="#00FF88" stroke-width="18" stroke-linecap="round"/>
+      <path class="bh-path" d="M18.4,133A88,88,0,0,1,87.8,12.8" stroke="#00FF88" stroke-width="18" stroke-linecap="round" style="animation-delay:.18s"/>
+      <path class="bh-path" d="M112.2,12.8A88,88,0,0,1,181.6,133" stroke="#00FF88" stroke-width="18" stroke-linecap="round" style="animation-delay:.36s"/>
+      <!-- inner arcs -->
+      <path class="bh-path" d="M76,68.2A36,36,0,0,1,50,111.8" stroke="#00FF88" stroke-width="16" stroke-linecap="round" style="animation-delay:.7s"/>
+      <path class="bh-path" d="M100,136A36,36,0,0,1,52,124" stroke="#00FF88" stroke-width="16" stroke-linecap="round" style="animation-delay:.85s"/>
+      <path class="bh-path" d="M148,124A36,36,0,0,1,100,136" stroke="#00FF88" stroke-width="16" stroke-linecap="round" style="animation-delay:1s"/>
+      <path class="bh-path" d="M150,111.8A36,36,0,0,1,124,68.2" stroke="#00FF88" stroke-width="16" stroke-linecap="round" style="animation-delay:1.15s"/>
+      <!-- center -->
+      <circle class="bh-dot" cx="100" cy="100" r="13" stroke="#00FF88" stroke-width="8"/>
+      <circle class="bh-dot" cx="100" cy="100" r="5" fill="#00FF88" style="animation-delay:.1s"/>
+    </svg>
+  </div>
+
+  <!-- title with glitch -->
+  <div class="title-wrap">
+    <div class="title">PLAGUE</div>
+  </div>
+
+  <!-- typewriter -->
+  <div class="typewriter-wrap">
+    <div class="typewriter" id="tw"></div><div class="cursor" id="cur"></div>
+  </div>
+
+  <!-- subtitle -->
+  <p class="sub">A Solana DeFi protocol where every trade spreads infection on-chain.<br><em>Spread $PLAGUE. Survive Outbreaks. Earn real SOL — forever.</em></p>
+
+  <!-- tiers -->
+  <div class="tiers">
+    <div class="tier">
+      <span class="tier-lbl">TIER 1</span>
+      <span class="tier-val g">+75%</span>
+      <span class="tier-range">$0 – $20K</span>
+    </div>
+    <div class="tier" style="border-left:1px solid rgba(0,255,136,.1);">
+      <span class="tier-lbl">TIER 2</span>
+      <span class="tier-val a">+50%</span>
+      <span class="tier-range">$20K – $35K</span>
+    </div>
+    <div class="tier" style="border-left:1px solid rgba(0,255,136,.1);">
+      <span class="tier-lbl">TIER 3</span>
+      <span class="tier-val r">+30%</span>
+      <span class="tier-range">$35K – $50K</span>
+    </div>
+    <div class="tier" style="border-left:1px solid rgba(0,255,136,.1);flex:1.4;">
+      <span class="tier-lbl">THRESHOLD</span>
+      <span style="font-family:'Chakra Petch',sans-serif;font-size:18px;font-weight:700;color:var(--text);">$50,000</span>
+      <span class="tier-range">Total cap</span>
+    </div>
+  </div>
+
+  <!-- CTAs -->
+  <div class="ctas">
+    <a class="btn-wp" href="https://plague-whitepaper.pages.dev/" target="_blank" rel="noopener">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Read Whitepaper
+    </a>
+    <a class="btn-tg" href="https://t.me/plagueprotocol" target="_blank" rel="noopener">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.19 13.238l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.958.321z"/></svg>
+      Join Telegram
+    </a>
+  </div>
+
+  <!-- badge -->
+  <div class="badge">
+    <div class="badge-dot"></div>
+    CONTRIBUTION WINDOW OPENING SOON
+  </div>
+
+</div>
+
+<!-- footer -->
+<div class="foot">
+  <span>plagueprotocol.com</span>
+  <span>Solana · 2026</span>
+  <span>Not financial advice</span>
+</div>
+
+<script>
+/* ── CANVAS — infection particles + glitch texture ── */
+(function(){
+  const cvs=document.getElementById('c');
+  const ctx=cvs.getContext('2d');
+  let W,H,pts=[],frame=0;
+
+  // ── glitch state ──
+  let glitchTimer=0,glitchActive=false,glitchLines=[];
+
+  function resize(){
+    W=cvs.width=window.innerWidth;
+    H=cvs.height=window.innerHeight;
+  }
+
+  function makePoint(){
+    return{
+      x:Math.random()*W,
+      y:H+Math.random()*40,
+      r:Math.random()*1.4+.4,
+      vx:(Math.random()-.5)*.24,
+      vy:-(Math.random()*.45+.15),
+      life:0,
+      maxLife:Math.random()*400+260,
+      alpha:Math.random()*.05+.016
+    };
+  }
+
+  resize();
+  for(let i=0;i<50;i++){
+    const p=makePoint();
+    p.y=Math.random()*H;
+    p.life=Math.random()*p.maxLife;
+    pts.push(p);
+  }
+
+  function spawnGlitch(){
+    glitchLines=[];
+    const count=Math.floor(Math.random()*6)+3;
+    for(let i=0;i<count;i++){
+      glitchLines.push({
+        y:Math.random()*H,
+        h:Math.random()*3+.5,
+        x:Math.random()*W*.4,
+        w:Math.random()*W*.55+W*.1,
+        color:Math.random()<.15?
+          `rgba(255,0,51,${Math.random()*.06+.02})`:
+          `rgba(0,255,136,${Math.random()*.05+.015})`,
+        dx:(Math.random()-.5)*120, // displacement
+        life:0,
+        maxLife:Math.floor(Math.random()*6)+2
+      });
+    }
+  }
+
+  function drawScanlines(){
+    // subtle horizontal lines every 4px
+    for(let y=0;y<H;y+=4){
+      ctx.fillStyle='rgba(0,0,0,0.025)';
+      ctx.fillRect(0,y,W,1);
+    }
+  }
+
+  function drawGlitch(){
+    // trigger random glitch bursts
+    glitchTimer--;
+    if(glitchTimer<=0){
+      glitchTimer=Math.floor(Math.random()*90)+30;
+      if(Math.random()<.55){glitchActive=true;spawnGlitch();}
+    }
+    if(!glitchActive)return;
+
+    let allDone=true;
+    glitchLines.forEach(l=>{
+      if(l.life>=l.maxLife)return;
+      allDone=false;
+      l.life++;
+      const fade=1-(l.life/l.maxLife);
+      // main glitch bar
+      ctx.fillStyle=l.color;
+      ctx.fillRect(l.x,l.y,l.w,l.h);
+      // displaced copy slightly offset (the "corruption" look)
+      if(Math.abs(l.dx)>20){
+        ctx.fillStyle=l.color.replace(/[\d.]+\)$/,(v)=>`${parseFloat(v)*.5})`);
+        ctx.fillRect(l.x+l.dx*.3,l.y+l.h*2,l.w*.6,l.h*.8);
+      }
+    });
+    if(allDone)glitchActive=false;
+
+    // occasional full-width thin corruption sweep
+    if(Math.random()<.012){
+      const sy=Math.random()*H;
+      ctx.fillStyle=`rgba(0,255,136,${Math.random()*.025+.008})`;
+      ctx.fillRect(0,sy,W,Math.random()*1.5+.3);
+    }
+    // red flicker (rare)
+    if(Math.random()<.004){
+      const sy=Math.random()*H;
+      ctx.fillStyle=`rgba(255,0,51,${Math.random()*.018+.006})`;
+      ctx.fillRect(Math.random()*W*.3,sy,Math.random()*W*.4,1);
+    }
+    // occasional corruption block
+    if(Math.random()<.018){
+      const bx=Math.random()*(W-60),by=Math.random()*(H-20);
+      const bw=Math.random()*80+10,bh=Math.random()*4+1;
+      ctx.fillStyle=`rgba(0,255,136,${Math.random()*.04+.01})`;
+      ctx.fillRect(bx,by,bw,bh);
+    }
+  }
+
+  function draw(){
+    frame++;
+    ctx.clearRect(0,0,W,H);
+
+    // ── scanlines ──
+    drawScanlines();
+
+    // ── glitch texture ──
+    drawGlitch();
+
+    // ── infection particles ──
+    pts.forEach((p,i)=>{
+      p.x+=p.vx;p.y+=p.vy;p.life++;
+      p.vx+=(Math.random()-.5)*.01;
+      p.vx=Math.max(-.38,Math.min(.38,p.vx));
+      if(p.life>p.maxLife||p.y<-10){pts[i]=makePoint();return;}
+      const fade=Math.min(1,p.life/60)*Math.min(1,(p.maxLife-p.life)/60);
+      const a=p.alpha*fade;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(0,255,136,${a})`;
+      ctx.fill();
+      for(let j=i+1;j<pts.length;j++){
+        const q=pts[j];
+        const dx=p.x-q.x,dy=p.y-q.y;
+        const d2=dx*dx+dy*dy;
+        if(d2<8100){
+          const la=a*(1-Math.sqrt(d2)/90)*0.28;
+          ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);
+          ctx.strokeStyle=`rgba(0,255,136,${la})`;
+          ctx.lineWidth=.5;ctx.stroke();
+        }
+      }
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+  window.addEventListener('resize',resize);
+})();
+
+/* ── TYPEWRITER ── */
+(function(){
+  const text='You will get infected.';
+  const el=document.getElementById('tw');
+  const cur=document.getElementById('cur');
+  let i=0;
+  function type(){
+    if(i<text.length){
+      el.textContent+=text[i++];
+      setTimeout(type,Math.random()*60+40);
+    }
+  }
+  // start after delay matching CSS animation
+  setTimeout(type,3500);
+})();
+</script>
+</body>
+</html>
