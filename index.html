@@ -4,57 +4,49 @@
 <meta charset="UTF-8">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-:root{
-  --g:#00FF88;--r:#FF0033;--bg:#050505;
-  --text:#c4dfd0;--muted:#3e6b50;--dim:#1e3a28;
-}
-html{background:var(--bg)!important;}
+:root{--g:#00FF88;--r:#FF0033;--bg:#050505;--text:#c4dfd0;--muted:#3e6b50;--dim:#1e3a28;}
+
+html,body{background:#050505!important;}
 body{
-  min-height:100dvh;
-  background:var(--bg)!important;
-  color:var(--text);
   font-family:'IBM Plex Mono',monospace;
-  overflow-x:hidden;overflow-y:auto;
+  color:var(--text);
+  /* JS sets --vh; fall back to 100svh which excludes mobile browser chrome */
+  height:100svh;height:calc(var(--vh,1svh)*100);
+  overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
 }
 
 canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
 
-/* ── MAIN LAYOUT — scrollable, safe-centered ── */
+/* ── CENTER WRAPPER ── */
 .wrap{
   position:relative;z-index:10;
-  min-height:100dvh;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:flex-start;
-  padding-top:clamp(52px,11dvh,100px);
-  padding-left:clamp(16px,4vw,36px);
-  padding-right:clamp(16px,4vw,36px);
-  padding-bottom:clamp(56px,9dvh,72px);
+  display:flex;flex-direction:column;align-items:center;
   text-align:center;
+  width:100%;
+  /* JS scales this to fit if needed */
 }
 
 /* ── BIOHAZARD ── */
 .bh-wrap{
   position:relative;
-  width:clamp(80px,16vmin,190px);
-  height:clamp(80px,16vmin,190px);
+  width:90px;height:90px;
   display:flex;align-items:center;justify-content:center;
-  margin-bottom:clamp(8px,1.6dvh,24px);
+  margin-bottom:10px;
   opacity:0;animation:fade-in .1s .2s forwards;
 }
 .bh-glow{
   position:absolute;inset:-30%;border-radius:50%;
-  background:radial-gradient(circle,rgba(0,255,136,.13) 0%,transparent 70%);
+  background:radial-gradient(circle,rgba(0,255,136,.13),transparent 70%);
   opacity:0;animation:glow-in 1.2s 1.8s ease-out forwards;
 }
 .bh-ring{
-  position:absolute;
-  width:calc(100% + 10px);height:calc(100% + 10px);
+  position:absolute;width:102px;height:102px;
   border-radius:50%;border:1px solid rgba(0,255,136,.14);
   opacity:0;animation:ring-in .6s 2.8s ease-out forwards;
 }
 .bh-ring2{
-  position:absolute;
-  width:calc(100% + 22px);height:calc(100% + 22px);
+  position:absolute;width:114px;height:114px;
   border-radius:50%;border:1px solid rgba(0,255,136,.06);
   opacity:0;animation:ring-in .6s 3s ease-out forwards;
 }
@@ -68,164 +60,141 @@ canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
   animation:draw 2.2s .3s cubic-bezier(.4,0,.2,1) forwards;
 }
 .bh-dot{opacity:0;animation:fade-in .4s 2.3s ease-out forwards;}
-@keyframes draw{to{stroke-dashoffset:0;}}
-@keyframes glow-in{from{opacity:0;transform:scale(.8);}to{opacity:1;transform:scale(1);}}
-@keyframes ring-in{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
-@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
-@keyframes fade-in{to{opacity:1;}}
 
 /* ── TITLE ── */
 .title-wrap{
-  margin-bottom:clamp(4px,1dvh,12px);
-  opacity:0;transform:translateY(24px);
+  margin-bottom:6px;
+  opacity:0;transform:translateY(20px);
   animation:title-in .7s 2.4s cubic-bezier(.2,0,0,1) forwards;
 }
 .title{
   font-family:'Chakra Petch',sans-serif;
-  font-size:clamp(48px,12vmin,136px);
+  font-size:clamp(52px,14vw,136px);
   font-weight:700;letter-spacing:.08em;
   color:#f0faf4;line-height:1;
   animation:title-in .7s 2.4s cubic-bezier(.2,0,0,1) forwards,
             text-glitch 7s 4s infinite;
   opacity:0;
 }
+
+/* ── TYPEWRITER ── */
+.typewriter-wrap{
+  height:26px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:10px;
+  opacity:0;animation:fade-in .01s 3.4s forwards;
+}
+.typewriter{font-family:'Share Tech Mono',monospace;font-size:16px;letter-spacing:.1em;color:var(--g);}
+.cursor{display:inline-block;width:2px;height:1em;background:var(--g);margin-left:3px;vertical-align:middle;animation:blink .7s step-end infinite;}
+
+/* ── SUBTITLE — hidden on mobile, shown on desktop ── */
+.sub{
+  font-size:13px;line-height:1.7;color:var(--muted);
+  max-width:460px;padding:0 20px;
+  margin-bottom:16px;
+  opacity:0;animation:fade-in .6s 5.4s ease-out forwards;
+  display:none; /* mobile: hidden by default */
+}
+.sub em{font-style:normal;color:var(--text);}
+
+/* ── TIERS — always 2x2 grid ── */
+.tiers{
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:1px;
+  background:rgba(0,255,136,.1);
+  border:1px solid rgba(0,255,136,.1);
+  margin-bottom:12px;
+  opacity:0;animation:fade-in .6s 5.9s ease-out forwards;
+  width:min(340px,92vw);
+}
+.tier{
+  background:#050505;
+  padding:10px 14px;
+  display:flex;flex-direction:column;
+  gap:3px;
+}
+.tier-lbl{font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:.22em;color:var(--muted);}
+.tier-val{font-family:'Chakra Petch',sans-serif;font-size:22px;font-weight:700;}
+.tier-val.g{color:var(--g);}.tier-val.a{color:#FF8C00;}.tier-val.r{color:var(--r);}
+.tier-range{font-family:'Share Tech Mono',monospace;font-size:6px;letter-spacing:.1em;color:var(--dim);}
+
+/* ── CTAs ── */
+.ctas{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:12px;
+  opacity:0;animation:fade-in .6s 6.4s ease-out forwards;
+  width:min(340px,92vw);
+}
+.btn-wp,.btn-tg{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  padding:11px 10px;
+  font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.18em;
+  text-decoration:none;white-space:nowrap;
+}
+.btn-wp{border:1px solid rgba(0,255,136,.38);background:rgba(0,255,136,.08);color:var(--g);}
+.btn-tg{border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.35);}
+
+/* ── BADGE — hidden on mobile ── */
+.badge{
+  display:none; /* hidden on mobile */
+  align-items:center;gap:8px;
+  padding:7px 16px;
+  border:1px solid rgba(0,255,136,.2);background:rgba(0,255,136,.04);
+  font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:.24em;
+  color:rgba(0,255,136,.5);
+  opacity:0;animation:fade-in .6s 6.8s ease-out forwards;
+}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:var(--g);animation:blink .9s step-end infinite;flex-shrink:0;}
+
+/* ── FOOTER ── */
+.foot{
+  position:fixed;bottom:0;left:0;right:0;z-index:20;
+  height:38px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;
+  border-top:1px solid rgba(0,255,136,.07);background:rgba(5,5,5,.97);
+  font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:.14em;color:var(--dim);
+}
+
+/* ── DESKTOP (≥ 600px wide AND ≥ 700px tall) — show everything bigger ── */
+@media(min-width:600px) and (min-height:700px){
+  body{height:100vh;}
+  .bh-wrap{width:160px;height:160px;margin-bottom:22px;}
+  .bh-ring{width:172px;height:172px;}
+  .bh-ring2{width:184px;height:184px;}
+  .title{font-size:clamp(80px,9vw,136px);}
+  .title-wrap{margin-bottom:12px;}
+  .typewriter-wrap{height:30px;margin-bottom:16px;}
+  .typewriter{font-size:20px;}
+  .sub{display:block;}
+  .tiers{width:460px;margin-bottom:24px;}
+  .tier{padding:14px 18px;gap:5px;}
+  .tier-lbl{font-size:8px;}
+  .tier-val{font-size:26px;}
+  .tier-range{font-size:8px;}
+  .ctas{width:460px;gap:10px;margin-bottom:24px;}
+  .btn-wp,.btn-tg{padding:13px 20px;font-size:9px;}
+  .badge{display:inline-flex;margin-bottom:0;}
+  .foot{height:44px;padding:0 48px;font-size:9px;}
+}
+
+/* ── ANIMATIONS ── */
+@keyframes draw{to{stroke-dashoffset:0;}}
+@keyframes glow-in{from{opacity:0;transform:scale(.8);}to{opacity:1;transform:scale(1);}}
+@keyframes ring-in{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes fade-in{to{opacity:1;}}
 @keyframes title-in{to{opacity:1;transform:translateY(0);}}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
 @keyframes text-glitch{
   0%,85%,100%{transform:translate(0);text-shadow:none;}
   86%{transform:translate(-3px,0);text-shadow:4px 0 rgba(255,0,51,.5),-4px 0 rgba(0,170,255,.5);}
   87%{transform:translate(2px,1px);text-shadow:-3px 0 rgba(255,0,51,.35);}
   88%{transform:translate(0);text-shadow:none;}
-  89%{transform:translate(-1px,0);text-shadow:2px 0 rgba(0,170,255,.3);}
-  90%{transform:translate(0);text-shadow:none;}
 }
-
-/* ── TYPEWRITER ── */
-.typewriter-wrap{
-  height:clamp(22px,3.5dvh,32px);
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:clamp(8px,1.6dvh,16px);
-  opacity:0;animation:fade-in .01s 3.4s forwards;
-}
-.typewriter{
-  font-family:'Share Tech Mono',monospace;
-  font-size:clamp(12px,3.2vmin,22px);
-  letter-spacing:.1em;color:var(--g);
-}
-.cursor{
-  display:inline-block;width:2px;height:1em;
-  background:var(--g);margin-left:3px;
-  vertical-align:middle;animation:blink .7s step-end infinite;
-}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
-
-/* ── SUBTITLE ── */
-.sub{
-  font-size:clamp(10px,2.5vmin,14px);line-height:1.7;
-  color:var(--muted);
-  max-width:min(480px,88vw);
-  margin-bottom:clamp(12px,2.4dvh,30px);
-  opacity:0;animation:fade-in .6s 5.4s ease-out forwards;
-}
-.sub em{font-style:normal;color:var(--text);}
-
-/* ── TIERS — 2x2 grid always ── */
-.tiers{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:1px;
-  background:rgba(0,255,136,.1);
-  border:1px solid rgba(0,255,136,.1);
-  margin-bottom:clamp(12px,2.4dvh,30px);
-  opacity:0;animation:fade-in .6s 5.9s ease-out forwards;
-  width:min(420px,88vw);
-}
-.tier{
-  background:var(--bg);
-  padding:clamp(9px,1.8dvh,14px) clamp(10px,2.5vw,14px);
-  display:flex;flex-direction:column;
-  gap:clamp(2px,0.4dvh,5px);
-}
-.tier-lbl{
-  font-family:'Share Tech Mono',monospace;
-  font-size:clamp(7px,1.6vmin,8px);letter-spacing:.22em;color:var(--muted);
-}
-.tier-val{
-  font-family:'Chakra Petch',sans-serif;
-  font-size:clamp(18px,4.5vmin,26px);font-weight:700;
-}
-.tier-val.g{color:var(--g);}.tier-val.a{color:#FF8C00;}.tier-val.r{color:var(--r);}
-.tier-range{
-  font-family:'Share Tech Mono',monospace;
-  font-size:clamp(6px,1.4vmin,8px);letter-spacing:.1em;color:var(--dim);
-}
-
-/* ── CTAs ── */
-.ctas{
-  display:flex;gap:8px;flex-wrap:wrap;justify-content:center;
-  margin-bottom:clamp(10px,2dvh,28px);
-  opacity:0;animation:fade-in .6s 6.4s ease-out forwards;
-  width:min(420px,88vw);
-}
-.btn-wp,.btn-tg{
-  flex:1;min-width:0;
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:clamp(9px,1.6dvh,13px) clamp(12px,2.5vw,24px);
-  font-family:'Share Tech Mono',monospace;
-  font-size:clamp(8px,1.8vmin,10px);letter-spacing:.2em;
-  text-decoration:none;white-space:nowrap;
-}
-.btn-wp{
-  border:1px solid rgba(0,255,136,.38);background:rgba(0,255,136,.08);
-  color:var(--g);transition:background .15s;
-}
-.btn-wp:hover{background:rgba(0,255,136,.16);}
-.btn-tg{
-  border:1px solid rgba(255,255,255,.08);background:transparent;
-  color:rgba(255,255,255,.35);transition:border-color .15s,color .15s;
-}
-.btn-tg:hover{border-color:rgba(255,255,255,.22);color:rgba(255,255,255,.6);}
-
-/* ── BADGE ── */
-.badge{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:clamp(5px,1dvh,8px) clamp(10px,2.5vw,18px);
-  border:1px solid rgba(0,255,136,.2);background:rgba(0,255,136,.04);
-  font-family:'Share Tech Mono',monospace;
-  font-size:clamp(6px,1.6vmin,9px);letter-spacing:.24em;
-  color:rgba(0,255,136,.5);
-  opacity:0;animation:fade-in .6s 6.8s ease-out forwards;
-}
-.badge-dot{
-  width:5px;height:5px;border-radius:50%;
-  background:var(--g);animation:blink .9s step-end infinite;flex-shrink:0;
-}
-
-/* ── FOOTER ── */
-.foot{
-  position:fixed;bottom:0;left:0;right:0;z-index:20;
-  height:clamp(34px,5dvh,44px);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 clamp(12px,4vw,48px);
-  border-top:1px solid rgba(0,255,136,.07);
-  background:rgba(5,5,5,.97);
-  font-family:'Share Tech Mono',monospace;
-  font-size:clamp(6px,1.6vmin,9px);letter-spacing:.14em;
-  color:var(--dim);
-  opacity:0;animation:fade-in .6s 7s ease-out forwards;
-}
-
-/* ── VERY SHORT SCREENS — hide subtitle to guarantee fit ── */
-@media(max-height:580px){
-  .sub{display:none;}
-  .badge{display:none;}
-}
-@media(max-height:480px){
-  .bh-wrap{width:64px;height:64px;margin-bottom:6px;}
-  .tier-range{display:none;}
-}
-@media(prefers-reduced-motion:reduce){
-  *{animation-duration:.01ms!important;animation-iteration-count:1!important;}
-}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;}}
 </style>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>PLAGUE Protocol — Coming Soon</title>
@@ -517,6 +486,30 @@ canvas{position:fixed;inset:0;z-index:0;}
 </div>
 
 <script>
+/* ── SET REAL VIEWPORT HEIGHT + SCALE CONTENT TO FIT ── */
+(function(){
+  function fit(){
+    const vh = window.innerHeight;
+    document.documentElement.style.setProperty('--vh', vh * 0.01 + 'px');
+    const wrap = document.querySelector('.wrap');
+    if(!wrap) return;
+    wrap.style.transform = '';
+    wrap.style.transformOrigin = '';
+    const wh = wrap.scrollHeight;
+    const avail = vh - 38; // minus footer
+    if(wh > avail){
+      const scale = avail / wh;
+      wrap.style.transform = 'scale(' + scale + ')';
+      wrap.style.transformOrigin = 'top center';
+    }
+  }
+  // Run after fonts/layout settle
+  window.addEventListener('load', fit);
+  window.addEventListener('resize', fit);
+  setTimeout(fit, 300);
+  setTimeout(fit, 800);
+})();
+
 /* ── CANVAS — infection particles + glitch texture ── */
 (function(){
   const cvs=document.getElementById('c');
